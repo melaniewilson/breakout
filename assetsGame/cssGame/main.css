@@ -1,0 +1,100 @@
+body {
+	color: white;
+	letter-spacing: 3px;
+	text-align: center;
+}
+
+.header {
+	letter-spacing: 18px;
+}
+
+.jumbotron {
+	background-color: black;
+}
+
+.canvas {
+	border: 2px solid white;
+}
+
+.customScoreTable {
+	border: 2px solid white;
+	width: 200px;
+	float: left;
+	font-size: 12px;
+	font-family: arial;
+	text-align: center;
+}
+
+.login {
+	border: solid white 2px;
+	width: 200px;
+	height: 355px;
+	float: right;
+	position: top;
+	padding: 10px;
+}
+
+.login p {
+	font-size: 10px;
+	font-family: arial;
+}
+
+.userNameTextBox {
+	width: 125px;
+	height: 25px;
+	display: inline-block;
+}
+
+
+.login a {
+	cursor: crosshair;
+	outline: none;
+	text-decoration: none;
+	display: inline;
+	font-size: 10px;
+}
+
+.inputBoxes {
+	padding-bottom: 15px;
+}
+
+.submitButton {
+	float: right;
+	height: 25px;
+	line-height: 10px;
+}
+
+.spotifyBox {
+	display: inline-block;
+}
+
+.spotifyBox p {
+	display: inline-block;
+	margin-right: 5px;
+	font-size: 10px;
+	letter-spacing: 5px;
+}
+
+.embed-container {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+    overflow: hidden;
+    max-width: 100%;
+    height: auto;
+}
+    .embed-container iframe,
+    .embed-container object,
+    .embed-container embed {
+        position: absolute;
+        top: 50px;
+        left: 0;
+        width: 100%;
+        height: 30%;
+    }
+
+
+
+
+
+

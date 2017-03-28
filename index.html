@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Breakout</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<!-- Bootstrap -- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<!-- Bootstrap -- Optional theme -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+	<!-- css -->
+	<link rel="stylesheet" type="text/css" href="assetsGame/cssGame/main.css">
+	<!-- font awesome -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+	<!-- begin jquery -->
+	<script src="https://code.jquery.com/jquery-3.1.1.min.js"
+  integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+  crossorigin="anonymous"></script>
+  	<!-- end jquery -->
+  	<script src="assetsGame/jsGame/phaser.min.js"></script>
+</head>
+<body>
+<div class="container">
+	<div class="jumbotron">
+		<div class="row">
+		<div class="col-sm-12 header">
+		<h1>Breakout _</h1>
+		<br>
+		</div>
+	</div>
+
+	<div class="row">
+    	<div col-sm-12>
+	  		<p>Create a user log in to play against your friends. Play and get the highest score!</p>
+	  		<br>
+	  	</div>
+  	</div>
+
+  	<div class="row">
+    	<div class="col-sm-12">
+	  		<div id="winningMessage"></div>
+	  		<div id="losingMessage"></div>
+	  		<br>
+	  	</div>
+  	</div>
+
+	<div class="row">
+		<div class="col-sm-3">
+			<table class="table table-bordered customScoreTable">
+	 	  	<thead>
+	 	    	<tr>
+	 			<th>User Name: </th>
+	 			<th>Score: </th>
+	 			</tr>
+	 	  	</thead>
+	 	  	<tbody>		
+	 	  	</tbody>
+			</table>
+		</div>	
+		<div class="col-sm-6">
+			<!-- canvas -->
+			<div id="game" class="col-sm-6">
+		<!-- 	<canvas class="canvas" width="480" height="350"></canvas> -->
+			</div>
+		</div>
+		<div class="col-sm-3">
+		<!-- user log in -->
+			<div class="login">
+				<p>Create your user name to track your score</p>
+				<hr>
+				<p>User Name</p>
+				<!-- user name text box -->
+				<div class="inputBoxes">
+					<input type="text" class="form-control userNameTextBox" id="userName">
+					<!-- user name submit button-->
+					<BUTTON type="submit" class="btn btn-primary submitButton" id="submit" value="Go">Go</BUTTON>
+					<div id="error-prompt"> </div>
+				</div>
+				<hr>
+				<p>Listen to music with Spotify.</p>
+				<div class="spotifyBox"> 
+				<p>Login: </p> <a href="#" class="spotify"><i class="fa fa-spotify fa-2x" aria-hidden="true"></i></a>
+				</div>
+				<form id="artist-form">
+				<label for="artist-input"><p>Choose Your Artist</p></label>
+				<input type="text" class="form-control userNameTextBox" id="artist-input">
+				<input id="select-artist" class="btn btn-primary submitButton" type="submit" value="Go">
+				</form>	
+			</div>
+		</div>
+	</div> 
+
+	<div class="row">
+		<div class="col-sm-3"></div>
+		<div class="col-sm-6">
+			<!-- spotify player -->
+			<div id="player-div" class="embed-container"></div>
+		</div>
+		<div class="col-sm-3"></div>
+	</div>
+	</div>
+</div>
+<!-- main javascript -->
+<script src="assetsGame/jsGame/main.js"></script>
+<!-- begin spotify -->
+<script>
+  function getArtistTrack(artist) {
+
+    // Running an initial search to identify the artist's unique Spotify id
+    var queryURL = "https://api.spotify.com/v1/search?q=" + artist + "&type=artist";
+    $.ajax({
+      url: queryURL,
+      method: "GET"
+    }).done(function(response) {
+
+      // Printing the entire object to console
+      console.log(response);
+
+      // Printing the artist id from the Spotify object to console
+      var artistID = response.artists.items[0].id;
+
+      // Building a SECOND URL to query another Spotify endpoint (this one for the tracks)
+      var queryURLTracks = "https://api.spotify.com/v1/artists/" + artistID + "/top-tracks?country=US";
+
+      // Running a second AJAX call to get the tracks associated with that Spotify id
+      $.ajax({
+        url: queryURLTracks,
+        method: "GET"
+      }).done(function(trackResponse) {
+
+        // Logging the tracks
+        console.log(trackResponse);
+
+        var player = "<iframe src='https://embed.spotify.com/?uri=spotify:track:" +
+          trackResponse.tracks[0].id +
+          "' frameborder='0' allowtransparency='true'></iframe>";
+
+        // Appending the new player into the HTML
+        $("#player-div").append(player);
+      });
+    });
+  }
+
+  // Event handler for user clicking the select-artist button
+  $("#select-artist").on("click", function(event) {
+    // Preventing the button from trying to submit the form
+    event.preventDefault();
+    // Storing the artist name
+    var artist = $("#artist-input").val().trim();
+
+    // Running the getArtistTrack (passing in the artist as an argument)
+    getArtistTrack(artist);
+
+  });
+</script>
+
+<!-- begin firebase -->
+<script src="https://www.gstatic.com/firebasejs/3.7.2/firebase.js"></script>
+<script>
+  var config = {
+    apiKey: "AIzaSyCuQSYju-2igxBpsGIEhhTMC-aOfTaWaM0",
+    authDomain: "pong-9a106.firebaseapp.com",
+    databaseURL: "https://pong-9a106.firebaseio.com",
+    storageBucket: "pong-9a106.appspot.com",
+    messagingSenderId: "502805609437"
+  };
+  firebase.initializeApp(config);
+  var $userName, $score;
+  var database = firebase.database();
+
+  	$("#submit").on("click", function(event){
+	event.preventDefault();
+
+	$userName = $("#userName").val().trim();
+	// $score = $("#score").val().trim();
+
+	database.ref().push({
+		userName: $userName,
+		// score: $score,
+	});
+	// clear inputs
+	$("#userName").val("");
+	// $("#score").val("");
+
+});
+
+var snapshot = database.ref().on("child_added", function(snapshot) {
+	var userName = snapshot.val().userName;
+	// var score = snapshot.val().score;
+	cycle = snapshot.val().cycle;
+	var tr = $("<tr>");	  	
+
+// database.ref().on("child_added", function(snapshot) {
+// 	var tr = $("<tr>");
+// 	var userName = snapshot.val().userName;
+// 	var score = snapshot.val().score;
+
+// 	var myArr = [userName, score];
+
+// 	var tr = $("<tr>");
+	var myArr = [userName, score];
+
+	for (var data of myArr) {
+		var td = $("<td>");
+		td.text(data);
+		tr.append(td);
+	}
+	$("tbody").append(tr);
+
+}, function(errorObject) {
+	console.log("Errors: " + errorObject.code);
+});
+</script> 
+</body>
+</html>
